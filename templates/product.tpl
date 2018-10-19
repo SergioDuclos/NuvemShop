@@ -1,0 +1,362 @@
+{% if product.compare_at_price > product.price %}
+{% set price_discount_percentage = ((product.compare_at_price) - (product.price)) * 100 / (product.compare_at_price) %}
+{% endif %}
+<div class="row-fluid producto">
+    <div class="span12">
+    {% snipplet "breadcrumbs.tpl" %}
+    </div>
+    <div id="single-product" itemscope itemtype="http://schema.org/Product">
+        <div class="productContainer js-product-container" data-variants="{{product.variants_object | json_encode }}">
+
+            <div class="span6">
+                <div class="imagecol js-product-image-container">
+                    <div class="js-product-detail-slider mobile-bxslider product-detail_slider {% if product.images_count == 1 %}product-mobile-detail_single-image{% endif %}" {% if product.images_count > 1 %} style="visibility:hidden; height:0;"{% endif %}>             
+                        {% if product.images_count > 1 %}
+                            <ul class="bxslider" id="productbxslider">
+                                {% for image in product.images %}
+                                  <li class="product-slider" data-image="{{image.id}}" data-image-position="{{loop.index0}}" data-zoom-url="{{ image | product_image_url('huge') }}">{{ image | product_image_url('huge') | img_tag(image.alt, {class: 'js-image-open-mobile-zoom'}) }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="js-product-active-image visible-when-content-ready" data-zoom-url="{{ product.featured_image | product_image_url('original') }}">
+                                {{ product.featured_image | product_image_url('huge') | img_tag(product.featured_image.alt, {class: 'js-image-open-mobile-zoom'})}}
+                            </div>
+                        {% endif %}
+                        <a href="#" class="js-open-mobile-zoom {% if product.images_count > 1 %}{% endif %} product-image_mobile-zoom-btn visible-when-content-ready visible-phone btn btn-default mobile-zoom_btn">
+                            <div class="mobile-zoom_svg-icon">
+                                <svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" viewBox="598 -476.1 1792 1792"><path d="M1686 323.9v64c0 8.7-3.2 16.2-9.5 22.5s-13.8 9.5-22.5 9.5h-224v224c0 8.7-3.2 16.2-9.5 22.5s-13.8 9.5-22.5 9.5h-64c-8.7 0-16.2-3.2-22.5-9.5s-9.5-13.8-9.5-22.5v-224h-224c-8.7 0-16.2-3.2-22.5-9.5s-9.5-13.8-9.5-22.5v-64c0-8.7 3.2-16.2 9.5-22.5s13.8-9.5 22.5-9.5h224v-224c0-8.7 3.2-16.2 9.5-22.5s13.8-9.5 22.5-9.5h64c8.7 0 16.2 3.2 22.5 9.5s9.5 13.8 9.5 22.5v224h224c8.7 0 16.2 3.2 22.5 9.5s9.5 13.8 9.5 22.5zm128 32c0-123.3-43.8-228.8-131.5-316.5-87.7-87.7-193.2-131.5-316.5-131.5s-228.8 43.8-316.5 131.5C961.8 127.1 918 232.6 918 355.9s43.8 228.8 131.5 316.5c87.7 87.7 193.2 131.5 316.5 131.5s228.8-43.8 316.5-131.5c87.7-87.7 131.5-193.2 131.5-316.5zm512 832c0 35.3-12.5 65.5-37.5 90.5s-55.2 37.5-90.5 37.5c-36 0-66-12.7-90-38l-343-342c-119.3 82.7-252.3 124-399 124-95.3 0-186.5-18.5-273.5-55.5s-162-87-225-150-113-138-150-225S662 451.2 662 355.9s18.5-186.5 55.5-273.5 87-162 150-225 138-113 225-150 178.2-55.5 273.5-55.5 186.5 18.5 273.5 55.5 162 87 225 150 113 138 150 225 55.5 178.2 55.5 273.5c0 146.7-41.3 279.7-124 399l343 343c24.7 24.7 37 54.7 37 90z"/></svg>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="desktop-featured-product">
+                        {% if product.images_count > 1 %}
+                            <div class="span3">
+                                <div id="tS3" class="jThumbnailScroller">
+                                    <div class="jTscrollerContainer">
+                                        <div class="jTscroller">
+                                            {% for image in product.images %}
+                                                <a href="{{ image | product_image_url('huge') }}" class="cloud-zoom-gallery" rel="useZoom: 'zoom', smallImage: '{{ image | product_image_url('huge') }}' " data-image="{{image.id}}">
+                                                    {{ image | product_image_url('huge') | img_tag(image.alt) }}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <a href="#" class="jTscrollerPrevButton"></a>
+                                    <a href="#" class="jTscrollerNextButton"></a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="{% if product.images_count > 1 %}span9{% else %}span12{% endif %}">
+                            <div class="imagecolContent">
+                                {% if product.featured_image %}
+                                    <a href="{{ product.featured_image | product_image_url('huge') }}" id="zoom" class="cloud-zoom" rel="position: 'inside', showTitle: false, loading: '{{ 'Cargando...' | translate }}'">
+                                        {{ product.featured_image | product_image_url('huge') | img_tag(product.featured_image.alt) }}
+                                    </a>
+                                {% else %}
+                                    {{ product.featured_image | product_image_url('huge') | img_tag(product.featured_image.alt) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-box hidden-phone">
+                        <div class="shareLinks">
+                            <div class="shareItem twitter product-share-button" data-network="twitter">
+                                {{product.social_url | tw_share('none', 'Tweet', store.twitter_user, current_language.lang) }}
+                            </div>
+                            <div class="shareItem whatsapp product-share-button p-relative visible-phone">
+                               <a target="_blank"
+                                 href="whatsapp://send?text={{ product.social_url }}">
+                                  <i class="fa fa-whatsapp p-absolute"></i>
+                                  {{ "Compartir" | translate }}
+                              </a>
+                            </div>
+                            <div class="shareItem google product-share-button" data-network="gplus">
+                                {{product.social_url | g_plus('large') }}
+                            </div>
+                            <div class="shareItem facebook product-share-button" data-network="facebook">
+                                {{product.social_url | fb_like('store-product', 'button_count')}}
+                            </div>
+                            <div class="shareItem pinterest product-share-button" data-network="pinterest">
+                                {{product.social_url | pin_it('http:' ~ product.featured_image | product_image_url('large'))}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% snipplet 'placeholders/product-detail-image-placeholder.tpl' %}
+            </div>
+            <div class="span6">
+                <div class="descriptioncol">
+                    <div class="descriptioncolContent">
+
+                        <div class="row-fluid m-half-bottom">
+                            <div class="span8">
+                                <div class="title m-top-xs">
+                                    <h1 itemprop="name">{{ product.name }}</h1>
+                                </div>
+                                {% if product.free_shipping %}
+                                    <div class="free-shipping-product">{{ "Envío sin cargo" | translate }}</div>
+                                {% endif %}
+                                <div class="offer-product js-offer-label" {% if not product.compare_at_price or not product.display_price %}style="display:none;"{% endif %}>
+                                    <span>
+                                        <span class="js-offer-percentage">{{ price_discount_percentage |round }}</span>% OFF
+                                    </span>
+                                </div>
+                                <div class="out-of-stock-product js-stock-label" {% if product.has_stock %}style="display:none;"{% endif %}>{{ "Sin stock" | translate }}</div>
+                            </div>
+                            <div class="span4 price-holder">
+                                <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                    <div class="price">
+										<span class="price-compare">
+										  <span id="compare_price_display" class="js-compare-price-display" {% if not product.compare_at_price or not product.display_price %}style="display:none;"{% endif %}>{% if product.compare_at_price and product.display_price %}{{ product.compare_at_price | money }}{% endif %}</span>
+										</span>
+                                        <span class="price js-price-display" id="price_display" itemprop="price"{% if product.display_price %} content="{{ product.price / 100 }}"{% endif %} {% if not product.display_price %}style="display:none;"{% endif %}>{% if product.display_price %}{{ product.price | money }}{% endif %}
+                                        
+                                        {% set avista = product.price * 0.8 %} Boleto Bancário: {{ avista | money }} {% if product.compare_at_price and product.compare_at_price > product.price %} {% set price_discount_percentage = ((product.compare_at_price) - (product.price)) * 100 / (product.compare_at_price) %} {% endif %}
+                                        
+                                        </span>
+                                        <meta itemprop="priceCurrency" content="{{ product.currency }}" />
+                                        {% if product.stock_control %}
+                                            <meta itemprop="inventoryLevel" content="{{ product.stock }}" />
+                                            <meta itemprop="availability" href="http://schema.org/{{ product.stock ? 'InStock' : 'OutOfStock' }}" content="{{ product.stock ? 'In stock' : 'Out of stock' }}" />
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <meta itemprop="image" content="{{ 'http:' ~ product.featured_image | product_image_url('huge') }}" />
+                            <meta itemprop="url" content="{{ product.social_url }}" />
+                            {% if page_description %}
+                                <meta itemprop="description" content="{{ page_description }}" />
+                            {% endif %}
+                            {% if product.sku %}
+                                <meta itemprop="sku" content="{{ product.sku }}" />
+                            {% endif %}
+                            {% if product.weight %}
+                                <div itemprop="weight" itemscope itemtype="http://schema.org/QuantitativeValue" style="display:none;">
+                                    <meta itemprop="unitCode" content="{{ product.weight_unit | iso_to_uncefact}}" />
+                                    <meta itemprop="value" content="{{ product.weight}}" />
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% snipplet 'placeholders/product-detail-form-placeholder.tpl' %}
+                        {% if product.show_installments and product.display_price %}
+                            {% set installments_info_base_variant = product.installments_info %}
+                            {% set installments_info = product.installments_info_from_any_variant %}
+                            {% if installments_info %}
+                                <div class="js-mobile-toggle-installments {% if store.installments_on_steroids_enabled %}js-open-installments-modal-mobile{% endif %} visible-when-content-ready product-detail_installments-module p-relative pull-left full-width clear-both" {% if (not product.get_max_installments) and (not product.get_max_installments(false)) %}style="display: none;"{% endif %}>
+                                    {% snipplet "installments_in_product.tpl" %}
+                                    {% set has_payment_logos = settings.payments %}
+                                    {% set has_installments = product.show_installments and product.display_price %}
+                                    {% if has_payment_logos %}
+                                        <div class="product-detail_payment-logos-container clear-both text-left m-half-top m-quarter-top-xs pull-left">
+                                            <ul class="list-style-none p-left-none">
+                                                {% for payment in settings.payments %}
+                                                    {% if store.country == 'BR' %}
+                                                        {% if payment in ['visa', 'mastercard'] %}
+                                                            <li class="d-inline-block">
+                                                                <!-- Desktop payment flag -->
+                                                                <a class="js-product-detail-payment-logo product-detail_payment-logos-link hidden-phone" href="#InstallmentsModal" data-toggle="modal">
+                                                                    {{ payment | payment_logo | img_tag('',{class: 'product-detail_payment-logos-img'}) }}
+                                                                </a>
+                                                                <!-- Mobile payment flag -->
+                                                                <a class="js-product-detail-payment-logo product-detail_payment-logos-link visible-phone">
+                                                                    {{ payment | payment_logo | img_tag('',{class: 'product-detail_payment-logos-img'}) }}
+                                                                </a>
+                                                            </li>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if payment in ['visa', 'amex', 'mastercard'] %}
+                                                            <li class="d-inline-block">
+                                                                <!-- Desktop payment flag -->
+                                                                <a class="js-product-detail-payment-logo product-detail_payment-logos-link hidden-phone" href="#InstallmentsModal" data-toggle="modal">
+                                                                    {{ payment | payment_logo | img_tag('',{class: 'product-detail_payment-logos-img'}) }}
+                                                                </a>
+                                                                <!-- Mobile payment flag -->
+                                                                <a class="js-product-detail-payment-logo product-detail_payment-logos-link visible-phone">
+                                                                    {{ payment | payment_logo | img_tag('',{class: 'product-detail_payment-logos-img'}) }}
+                                                                </a>
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <li class="d-inline-block">
+                                                    <!-- Desktop payment flag -->
+                                                    <a class="js-product-detail-payment-logo product-detail_payment-icons p-relative pull-left opacity-80 hidden-phone" href="#InstallmentsModal" data-toggle="modal">
+                                                        <i class="fa fa-credit-card-alt product-detail_payment-logos-i-credit pull-left" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus product-detail_payment-logos-i-plus p-absolute" aria-hidden="true"></i>
+                                                    </a>
+                                                    <!-- Mobile payment flag -->
+                                                    <a class="js-product-detail-payment-logo product-detail_payment-icons p-relative pull-left opacity-80 visible-phone">
+                                                        <i class="fa fa-credit-card-alt product-detail_payment-logos-i-credit pull-left" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus product-detail_payment-logos-i-plus p-absolute" aria-hidden="true"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                    {% if product.show_installments and product.display_price %}
+                                        <!-- Desktop installments button -->
+                                        <a id="button-installments" class="see-installments-button hidden-phone {% if store.installments_on_steroids_enabled %}js-open-installments-modal-desktop{% endif %} button secondary p-none text-left-xs pull-left clear-both" href="#InstallmentsModal" role="button" data-toggle="modal" {% if (not product.get_max_installments) and (not product.get_max_installments(false)) %}style="display: none;"{% endif %}>
+                                            {% if store.installments_on_steroids_enabled %}
+                                                {% if has_payment_logos %}
+                                                    {% if product.has_direct_payment_only %}
+                                                        {{ "Ver más medios de pago" | translate }}
+                                                    {% else %}
+                                                        {{ "Ver más medios de pago y financiación" | translate }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if product.has_direct_payment_only %}
+                                                        {{ "Ver medios de pago" | translate }}
+                                                    {% else %}
+                                                        {{ "Ver medios de pago y financiación" | translate }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% else %}
+                                                {{ "Ver el detalle de las cuotas" | translate }}
+                                            {% endif %}
+                                        </a>
+                                        <!-- Mobile installments button -->
+                                        <a class="see-installments-button visible-phone {% if store.installments_on_steroids_enabled %}js-open-installments-modal-desktop{% endif %} button secondary p-none text-left-xs pull-left clear-both" {% if (not product.get_max_installments) and (not product.get_max_installments(false)) %}style="display: none;"{% endif %}>
+                                            {% if store.installments_on_steroids_enabled %}
+                                                {% if has_payment_logos %}
+                                                    {% if product.has_direct_payment_only %}
+                                                        {{ "Ver más medios de pago" | translate }}
+                                                    {% else %}
+                                                        {{ "Ver más medios de pago y financiación" | translate }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if product.has_direct_payment_only %}
+                                                        {{ "Ver medios de pago" | translate }}
+                                                    {% else %}
+                                                        {{ "Ver medios de pago y financiación" | translate }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% else %}
+                                                {{ "Ver el detalle de las cuotas" | translate }}
+                                            {% endif %}
+                                        </a>
+                                        <div class="p-relative pull-left clear-both m-quarter-top js-installments-selected-gw-container p-half-right text-left" style="display:none;">
+                                            <span class="font-bold">{{'Medio de pago elegido:' | translate }}</span>
+                                            <span class="js-installments-selected-gw text-capitalize installments_selected-gw "></span>
+                                            <span class="installments_check-icon installments_check-icon-gw fa-stack d-inline-block p-relative">
+                                              <i class="fa fa-circle fa-stack-2x"></i>
+                                              <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </div>
+                                        <div class="visible-phone product-detail_installments-arrow">
+                                            <svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" viewBox="598 -476.1 1792 1792"><path d="M1769 483.9c0 8.7-3.3 16.3-10 23l-466 466c-6.7 6.7-14.3 10-23 10s-16.3-3.3-23-10l-50-50c-6.7-6.7-10-14.3-10-23s3.3-16.3 10-23l393-393-393-393c-6.7-6.7-10-14.3-10-23s3.3-16.3 10-23l50-50c6.7-6.7 14.3-10 23-10s16.3 3.3 23 10l466 466c6.7 6.7 10 14.3 10 23z"/></svg>
+                                        </div> 
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        <form id="product_form" class="js-product-form visible-when-content-ready product-detail_form clear-both" method="post" action="{{ store.cart_url }}">
+                            <input type="hidden" name="add_to_cart" value="{{product.id}}" />
+                            <input type="hidden" name="preselected_gw_code">
+                                {% if product.variations %}
+                                    <div class="row-fluid">
+                                        {% include "snipplets/variants.tpl" with {'quickshop': false} %}
+                                    </div>
+                                {% endif %}
+                                {% if product.available and product.display_price %}
+                                    <div class="row-fluid product-quantity {% if product.variations %}product-quantity-desktop-line{% endif %} {% if product.show_installments and not product.variations %}product-quantity-mobile-no-line{% endif %} m-half-top">
+                                        <div class="quantity attributeLine span6 pull-left">
+                                            <label class="variation-label product-quantity_label text-left-xs">
+                                            <span>{{ "Elegir" | translate }} </span>
+                                            <strong>{{ "Cantidad" | translate }}</strong></label>
+                                            <input class="spinner product-quantity_input" value="1" type="number" name="quantity{{ item.id }}" value="{{ item.quantity }}" />
+                                        </div>
+                                    </div>
+                                {% endif %}  
+                            <div class="addToCartButton m-half-top m-top-xs">
+                                {% set state = store.is_catalog ? 'catalog' : (product.available ? product.display_price ? 'cart' : 'contact' : 'nostock') %}
+                                {% set texts = {'cart': "Agregar al carrito", 'contact': "Consultar precio", 'nostock': "Sin stock", 'catalog': "Consultar"} %}
+                                <input type="submit" class="button addToCart js-prod-submit-form js-addtocart {{state}}" value="{{ texts[state] | translate }}" {% if state == 'nostock' %}disabled{% endif %} />
+                            </div>
+                            <div class="row-fluid m-half-top">
+                                 {% snipplet "shipping_cost_calculator.tpl" with shipping_calculator_show = settings.shipping_calculator_product_page and not product.free_shipping, shipping_calculator_variant = product.selected_or_first_available_variant %}
+                            </div>
+                        </form>
+                        {% include "snipplets/social-widgets-mobile.tpl" %}
+                    </div>
+                </div>
+                {% if settings.product_description_position == "above" and product.description is not empty %}
+                    <div class="description display-when-content-ready user-content clear">
+                        {{ product.description }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="span12 fb-com-cont">
+                {% if settings.product_description_position == "below" and product.description is not empty %}
+                    <div class="description display-when-content-ready user-content clear">
+                        {{ product.description }}
+                    </div>
+                {% endif %}
+                {% if settings.show_product_fb_comment_box %}
+                    <div class="fb-comments" data-href="{{ product.social_url }}" data-num-posts="5" data-width="100%"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div id="related-products">
+    {% set related_products_ids = product.metafields.related_products.related_products_ids %}
+    {% if related_products_ids %}
+        {% set related_products = related_products_ids | get_products %}
+        {% set show = (related_products | length > 0) %}
+    {% endif %}
+    {% if not show %}
+        {% set related_products = category.products | shuffle | take(4) %}
+        {% set show = (related_products | length > 1) %}
+    {% endif %}
+    {% if show %}
+        <div class="row-fluid">
+            <div class="headerBox m-bottom-xs">
+                <h2>{{ "Productos Relacionados" | translate }}</h2>
+            </div>
+            <div class="product-row">
+                {% for related in related_products %}
+                    {% if product.id != related.id %}
+                        {% include 'snipplets/single_product.tpl' with {product : related} %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% if installments_info %}
+ {% set gateways = installments_info | length %}
+<div id="InstallmentsModal" class="modal installments_modal overflow-none hide fade{% if gateways <= '3' %} two-gates{% endif %}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-body full-height border-box">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        {% include 'snipplets/installments-details.tpl' %}
+    </div>
+</div>
+<div class="js-mobile-installments-panel mobile-right-panel animation-panel-right-close visible-phone p-none-bottom">
+    <a class="js-mobile-toggle-installments mobile-right-panel_header mobile-right-panel_header-dark" href="#">
+        <i class="fa fa-arrow-left mobile-right-panel_arrow-left"></i>
+        <span class="mobile-right-panel_header-text">
+            {% if store.installments_on_steroids_enabled %}
+                {% if product.has_direct_payment_only %}
+                    {{ "Medios de pago" | translate }}
+                {% else %}
+                    {{ 'Medios de pago y financiación' | translate }}
+                {% endif %}
+            {% else %}
+                {{ 'Detalles de las cuotas' | translate }}
+            {% endif %}
+        </span>
+    </a>
+    <div class="js-mobile-installments-body p-left p-right p-half-left-xs p-half-right-xs">
+        {# Content inserted vía JS #}
+    </div>
+</div>
+{% endif %}
+<div class="js-mobile-zoom-panel mobile-zoom_panel">
+    <a class="js-close-mobile-zoom mobile-zoom_btn btn btn-default m-right m-top">
+        <i class="fa fa-times"></i>
+    </a>
+    <i class="js-mobile-zoom-spinner mobile-zoom_spinner fa fa-circle-o-notch fa-spin"></i>
+    <div class="js-mobile-zoomed-image mobile-zoom_image-container">
+       {# Container to be filled with the zoomable image #}
+    </div>
+</div>

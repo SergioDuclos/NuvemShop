@@ -1,0 +1,79 @@
+{% if product.compare_at_price > product.price %}
+    {% set price_discount_percentage = ((product.compare_at_price) - (product.price)) * 100 / (product.compare_at_price) %}
+{% endif %}
+    {% set all_tags_displayed = (not product.has_stock and product.free_shipping and product.compare_at_price > product.price) or (product.has_stock and product.free_shipping and product.compare_at_price > product.price) %}
+<div class="span3 product-item-container">
+    <div class="dest-gral m-none-top-xs">
+        <div class="head{% if all_tags_displayed %} item-with-all-tags-height{% endif %}">
+            {% set product_url_with_selected_variant = has_filters ?  ( product.url | add_param('variant', product.selected_or_first_available_variant.id)) : product.url  %}
+            {% set grid_product_show_labels = product.free_shipping or product.compare_at_price or not product.has_stock %}
+            {% if grid_product_show_labels %}
+                <div class="product-grid-labels">
+                    {% if not product.has_stock %}
+                        <div class="product-label out-of-stock-product">{{ "Sin stock" | translate }}</div>
+                    {% endif %}
+                    {% if product.compare_at_price > product.price %}
+                        <div class="product-item_label product-item_label-offer product-label offer-product{% if not product.display_price %} d-none{% endif %}">
+                            <span>
+                                {{ price_discount_percentage |round }}% OFF
+                            </span>
+                        </div>
+                    {% endif %}
+                    {% if product.free_shipping %}
+                        <div class="product-label free-shipping-product">{{ "Envío sin cargo" | translate }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <a href="{{ product_url_with_selected_variant }}" title="{{ product.name }}" class="product-image">{{ product.featured_image | product_image_url("large") | img_tag(product.featured_image.alt) }}</a>
+            {% if settings.quick_shop %}
+                <a class="product-details-overlay fancybox" href="#quick{{ product.id }}">
+                    <span>{{ settings.quick_shop_label }}</span>
+                </a>
+                {% snipplet "quick-shop.tpl" %}
+            {% endif %}
+        </div>
+        <div class="bajada p-none-xs" itemscope itemtype="http://schema.org/Product">
+            <div class="title" itemprop="name">
+                <h3>
+                    <a href="{{ product_url_with_selected_variant }}" title="{{ product.name }}">
+                        {% if product.name | length > 40 %}
+                            {{ product.name | truncate(40) }}<span>...</span>
+                        {% else %}
+                            {{ product.name }}
+                        {% endif %}
+                    </a>
+                </h3>
+            </div>
+            <div class="price m-none-xs {% if not product.display_price%}hidden{% endif %}" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                <meta itemprop="priceCurrency" content="{{ product.currency }}" />
+                <span class="price-compare">
+                    <span id="compare_price_display" class="p-left-none-xs p-quarter-right-xs {% if not product.compare_at_price %}hidden{% endif %}">{% if product.compare_at_price %}{{ product.compare_at_price | money }}{% endif %}
+</span>
+                </span>
+                <span class="price" id="price_display" itemprop="price" content="{{ product.price / 100 }}" {% if product.display_price %}class="hidden"{% endif %}>{% if product.display_price %}{{ product.price | money }}{% endif %}<br/>
+                {% set avista = product.price * 0.8 %} Boleto Bancário: {{ avista | money }} {% if product.compare_at_price and product.compare_at_price > product.price %} {% set price_discount_percentage = ((product.compare_at_price) - (product.price)) * 100 / (product.compare_at_price) %} {% endif %}                                               
+                                                
+                </span>
+                {% set product_can_show_installments = product.show_installments and product.display_price and product.get_max_installments.installment > 1 %}
+                {% if product_can_show_installments %}
+                    {% set max_installments_without_interests = product.get_max_installments(false) %}
+                    {% if store.installments_on_steroids_enabled and store.country == 'AR' %}
+                        {% set max_installments_with_interests = product.get_max_installments %}
+                        {% if max_installments_with_interests %}
+                            <div class="max_installments m-quarter-top-xs">{{ "Hasta <strong class='installment-amount'>{1}</strong> cuotas" | t(max_installments_with_interests.installment, max_installments_with_interests.installment_data.installment_value_cents | money) }}</div>
+                        {% endif %}
+                    {% else %}
+                        {% if max_installments_without_interests and max_installments_without_interests.installment > 1 %}
+                            <div class="max_installments m-quarter-top-xs">{{ "<strong class='installment-amount'>{1}</strong> cuotas sin interés de <strong class='installment-price'>{2}</strong>" | t(max_installments_without_interests.installment, max_installments_without_interests.installment_data.installment_value_cents | money ) }}</div>
+                        {% else %}
+                            {% set max_installments_with_interests = product.get_max_installments %}
+                            {% if max_installments_with_interests %}
+                                <div class="max_installments m-quarter-top-xs">{{ "<strong class='installment-amount'>{1}</strong> cuotas de <strong class='installment-price'>{2}</strong>" | t(max_installments_with_interests.installment, max_installments_with_interests.installment_data.installment_value_cents | money) }}</div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
